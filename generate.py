@@ -1,61 +1,90 @@
-import random
-import requests
-import json
-
-# 設定影片長度
-video_length = 60
-
+import google.generativeai as genai
+from gradio_client import Client
+import moviepy.editor as mpe
+import os
+import cv2
 # 設定語錄主題
 topic = "勵志"
 
-# 設定 AI 語音模型
-voice_model = "小和尚"
-
-# 設定 AI 圖片生成模型
-image_model = "風景"
-
 # 使用 AI 模型生成語錄
 def generate_quote():
-  response = requests.get(f"https://www.googlecloudcommunity.com/gc/AI-ML/Google-Bard-API/m-p/538517/generate", params={
-    "prompt": f"生成一個關於 {topic} 的語錄",
-    "temperature": 0.7,
-    "max_tokens": 256,
-  })
-  return response.json()["text"]
+	with open("assests/gem.txt", "r") as f:
+		API_KEY = f.read()
+
+	prompt = "生成一個關於勵志的語錄, 大約 300 字"
+	genai.configure(api_key=API_KEY)
+	model = genai.GenerativeModel(model_name="gemini-pro")
+	chat = model.start_chat(history=[])
+	response = chat.send_message(prompt)
+	# for chunk in response:
+	# 	print(chunk.text)
+	# write to test.txt encoding="utf-8"
+	with open("test.txt", "w", encoding="utf-8") as f:
+		f.write(response.text)
+  
+	return response.text
 
 # 使用 AI 模型生成語音
 def generate_voice(text):
-  response = requests.get(f"https://fliki.ai/resources/api/tts", params={
-    "text": text,
-    "speaker": voice_model,
-    "speed": 1.0,
-  })
-  return response.content
+	client = Client("https://k2-fsa-text-to-speech.hf.space/--replicas/fdmt0/")
+	result = client.predict(
+			"Chinese (Mandarin, 普通话)",	# Literal['English', 'Chinese (Mandarin, 普通话)', 'Cantonese (粤语)', 'Min-nan (闽南话)', 'Arabic', 'Afrikaans', 'Bengali', 'Bulgarian', 'Catalan', 'Croatian', 'Czech', 'Danish', 'Dutch', 'Estonian', 'Finnish', 'French', 'Georgian', 'German', 'Greek', 'Gujarati', 'Hungarian', 'Icelandic', 'Irish', 'Italian', 'Kazakh', 'Korean', 'Latvian', 'Lithuanian', 'Luxembourgish', 'Maltese', 'Nepali', 'Norwegian', 'Persian', 'Polish', 'Portuguese', 'Romanian', 'Russian', 'Serbian', 'Slovak', 'Slovenian', 'Spanish', 'Swahili', 'Swedish', 'Thai', 'Tswana', 'Turkish', 'Ukrainian', 'Vietnamese']  in 'Language' Radio component
+			"csukuangfj/vits-piper-zh_CN-huayan-medium",	
+			text,	# str  in 'Input text' Textbox component
+			"0",	# str  in 'Speaker ID' Textbox component
+			0.9,	# float (numeric value between 0.1 and 10) in 'Speed (larger->faster; smaller->slower)' Slider component
+			api_name="/process"
+	)
+	with open(result[0], "rb") as file:
+		audio = file.read()
+	with open("test.mp3", "wb") as file:
+		file.write(audio)
 
-# 使用 AI 模型生成圖片
-def generate_image():
-  response = requests.get(f"https://hygraph.com/docs/api-reference/basics/api-playground/generate", params={
-    "prompt": f"生成一張 {image_model} 的圖片",
-    "style": "realistic",
-  })
-  return response.content
 
 # 生成影片
 def generate_video():
-  # 生成語錄
-  quote = generate_quote()
+	quote = generate_quote()
+	generate_voice(quote)
 
-  # 生成語音
-  voice = generate_voice(quote)
+	# 設定圖片路徑
+	image_dir = "success_man_picture/"
 
-  # 生成圖片
-  image = generate_image()
+	# 設定文字路徑
+	text_path = "test.txt"
 
-  # 合併語音和圖片
-  # ...
+	# 設定語音路徑
+	audio_path = "test.mp3"
 
-  # 輸出影片
-  # ...
+	# 讀取圖片
+	images = [os.path.join(image_dir, f) for f in os.listdir(image_dir)]
 
+	# Choose a target size (e.g., 640x480)
+	target_width = 896
+	target_height = 1344
+
+	# dont use the img if is not target size
+	for filename in os.listdir(image_dir):
+		img = cv2.imread(os.path.join(image_dir, filename))
+		if img.shape[0] != target_height or img.shape[1] != target_width:
+			os.remove(os.path.join(image_dir, filename))
+   
+
+	# 讀取文字
+	with open(text_path, "r", encoding="utf-8") as f:  # Replace "utf-8" with the identified encoding
+		text = f.read()
+
+
+	# 讀取語音
+	audio = mpe.AudioFileClip(audio_path)
+
+	# 建立影片
+	video = mpe.ImageSequenceClip(images, fps=0.25)
+
+	# 將文字加入影片
+	video = video.set_audio(audio)
+	video = video.set_duration(audio.duration)
+	video.write_videofile("output.mp4", fps=0.25)
+
+	
 # 執行
 generate_video()

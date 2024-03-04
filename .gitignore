@@ -1,9 +1,11 @@
 *.txt
 *.log
 *.json
-*test.jpg
+*.jpg
 Google.py
 test_api.py
 *.pyc
 telegrambot
 telegrambot.pub
+*.mp3
+*.mp4

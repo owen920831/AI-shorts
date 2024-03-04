@@ -1,3 +1,3 @@
 # AI-shorts
 
-demo: https://youtu.be/nn6GtzN4bI4
+demo: https://youtu.be/5UWq9lIAiVk

@@ -78,12 +78,12 @@ def generate_video():
 	audio = mpe.AudioFileClip(audio_path)
 
 	# 建立影片
-	video = mpe.ImageSequenceClip(images, fps=0.25)
+	video = mpe.ImageSequenceClip(images, fps=0.5)
 
 	# 將文字加入影片
 	video = video.set_audio(audio)
 	video = video.set_duration(audio.duration)
-	video.write_videofile("output.mp4", fps=0.25)
+	video.write_videofile("output.mp4", fps=0.5)
 
 	
 # 執行

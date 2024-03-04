@@ -8,4 +8,4 @@ test_api.py
 telegrambot
 telegrambot.pub
 *.mp3
-*.mp4
+# *.mp4

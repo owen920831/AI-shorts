@@ -1,0 +1,9 @@
+*.txt
+*.log
+*.json
+*test.jpg
+Google.py
+test_api.py
+*.pyc
+telegrambot
+telegrambot.pub

@@ -3,15 +3,16 @@ from gradio_client import Client
 import moviepy.editor as mpe
 import os
 import cv2
+import random
 # 設定語錄主題
-topic = "勵志"
+topic = "成功"
 
 # 使用 AI 模型生成語錄
 def generate_quote():
 	with open("assests/gem.txt", "r") as f:
 		API_KEY = f.read()
 
-	prompt = "生成一個關於勵志的語錄, 大約 300 字"
+	prompt = "生成一個關於{topic}的語錄, 大約 300 字"
 	genai.configure(api_key=API_KEY)
 	model = genai.GenerativeModel(model_name="gemini-pro")
 	chat = model.start_chat(history=[])
@@ -67,6 +68,9 @@ def generate_video():
 		img = cv2.imread(os.path.join(image_dir, filename))
 		if img.shape[0] != target_height or img.shape[1] != target_width:
 			os.remove(os.path.join(image_dir, filename))
+   
+   # random shuffle the images
+	random.shuffle(images)
    
 
 	# 讀取文字

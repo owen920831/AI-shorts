@@ -5,14 +5,14 @@ import os
 import cv2
 import random
 # 設定語錄主題
-topic = "成功"
+topic = ""
 
 # 使用 AI 模型生成語錄
 def generate_quote():
 	with open("assests/gem.txt", "r") as f:
 		API_KEY = f.read()
 
-	prompt = "生成一個關於{topic}的語錄, 大約 300 字"
+	prompt = "生成一個關於勵志的語錄, 大約 300 字"
 	genai.configure(api_key=API_KEY)
 	model = genai.GenerativeModel(model_name="gemini-pro")
 	chat = model.start_chat(history=[])
@@ -87,7 +87,7 @@ def generate_video():
 	# 將文字加入影片
 	video = video.set_audio(audio)
 	video = video.set_duration(audio.duration)
-	video.write_videofile("demo/output.mp4", fps=0.5)
+	video.write_videofile("output.mp4", fps=0.5)
 
 	
 # 執行

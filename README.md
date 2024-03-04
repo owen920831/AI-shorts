@@ -1,4 +1,3 @@
 # AI-shorts
 
-demo :
-[![Video Demo](demo/output.mp4)](demo/output.mp4)
+demo: https://youtu.be/nn6GtzN4bI4

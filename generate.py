@@ -87,7 +87,7 @@ def generate_video():
 	# 將文字加入影片
 	video = video.set_audio(audio)
 	video = video.set_duration(audio.duration)
-	video.write_videofile("output.mp4", fps=0.5)
+	video.write_videofile("demo/output.mp4", fps=0.5)
 
 	
 # 執行

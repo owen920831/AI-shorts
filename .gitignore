@@ -5,7 +5,6 @@
 Google.py
 test_api.py
 *.pyc
-telegrambot
-telegrambot.pub
 *.mp3
 *.mp4
+*.sh
